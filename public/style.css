@@ -37,6 +37,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, input {
+  touch-action: manipulation;
 }
 
 body {
@@ -44,6 +49,7 @@ body {
   background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   /* Deep vignette with dark subtle depth, no glaring orbs */
   background-image: 
@@ -57,6 +63,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
   max-width: 1060px;
   margin: 0 auto;
   padding: 1.25rem 1.5rem;
@@ -507,6 +514,7 @@ body {
 #view-chat {
   flex: 1;
   height: calc(100vh - 150px);
+  height: calc(100dvh - 150px);
 }
 
 .chat-container {
@@ -626,6 +634,8 @@ body {
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   padding: 1.35rem;
   display: flex;
   flex-direction: column;
@@ -946,61 +956,203 @@ body {
   color: var(--text-sub);
 }
 
-/* Mobile Responsiveness */
+/* Mobile Browser Optimization */
 @media (max-width: 640px) {
   .app-container {
-    padding: 0.5rem;
+    padding: max(0.4rem, env(safe-area-inset-top)) max(0.4rem, env(safe-area-inset-right)) max(0.4rem, env(safe-area-inset-bottom)) max(0.4rem, env(safe-area-inset-left));
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-height: 100dvh;
   }
 
   .top-nav {
-    padding: 0.6rem 0.85rem;
+    padding: 0.55rem 0.85rem;
     border-radius: var(--radius-md);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
   }
 
   .brand-name {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+  }
+
+  .brand-tag {
+    font-size: 0.65rem;
+  }
+
+  .stats-badge {
+    font-size: 0.74rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  /* Lobby on Mobile */
+  #view-lobby {
+    min-height: calc(100dvh - 85px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
   }
 
   .lobby-card {
-    padding: 2.25rem 1.15rem;
+    padding: 1.5rem 1rem;
+    border-radius: var(--radius-lg);
+    width: 100%;
+    margin: 0;
+  }
+
+  .lobby-badge {
+    margin-bottom: 0.9rem;
   }
 
   .hero-title {
-    font-size: 1.85rem;
+    font-size: 1.55rem;
+    line-height: 1.25;
+    margin-bottom: 0.55rem;
+  }
+
+  .hero-desc {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    margin-bottom: 1.4rem;
+  }
+
+  .find-wrapper {
+    margin-bottom: 1.4rem;
   }
 
   .btn-find {
-    width: 145px;
-    height: 145px;
+    width: 135px;
+    height: 135px;
   }
 
   .find-icon {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
 
   .find-label {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
+  }
+
+  /* Searching View on Mobile */
+  #view-searching {
+    min-height: calc(100dvh - 100px);
+  }
+
+  .searching-card {
+    padding: 2.5rem 1.25rem;
+    border-radius: var(--radius-lg);
+    width: 95%;
+  }
+
+  .radar-container {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 1.75rem;
+  }
+
+  .radar-1 { width: 45px; height: 45px; }
+  .radar-2 { width: 80px; height: 80px; }
+  .radar-3 { width: 120px; height: 120px; }
+
+  .radar-center {
+    width: 48px;
+    height: 48px;
+  }
+
+  .searching-title {
+    font-size: 1.35rem;
+  }
+
+  /* Chat View on Mobile (Native App Feel) */
+  #view-chat {
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px);
   }
 
   .chat-container {
     border-radius: var(--radius-md);
+    height: 100%;
   }
 
   .chat-header {
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .partner-title {
+    font-size: 0.92rem;
+  }
+
+  .btn-danger {
+    padding: 0.45rem 0.95rem;
+    font-size: 0.82rem;
+    min-height: 38px;
+  }
+
+  .chat-notice {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.72rem;
   }
 
   .chat-messages {
-    padding: 1rem;
+    padding: 0.85rem;
+    gap: 0.75rem;
   }
 
   .msg-row {
-    max-width: 86%;
+    max-width: 88%;
+  }
+
+  .msg-bubble {
+    padding: 0.7rem 0.95rem;
+    font-size: 0.9rem;
+  }
+
+  /* Mobile Chat Input: Prevent iOS zoom and handle home bar */
+  .chat-input-bar {
+    padding: 0.6rem 0.75rem;
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+  }
+
+  .chat-form input {
+    font-size: 16px !important; /* CRITICAL for iOS: Prevents automatic page zoom */
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  .btn-send {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  /* Modal on Mobile */
+  .partner-left-overlay {
+    padding: 1rem;
+  }
+
+  .partner-left-modal {
+    padding: 1.75rem 1.25rem;
+    width: 95%;
   }
 
   .modal-actions {
     flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .btn-primary, .btn-accent {
+    min-height: 46px;
+    font-size: 0.95rem;
   }
 }

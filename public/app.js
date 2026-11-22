@@ -402,6 +402,21 @@ socket.on('left_room_confirmed', () => {
   switchView('lobby');
 });
 
+// Mobile virtual keyboard & viewport adjustments
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    if (currentView === 'chat') {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  });
+}
+
+messageInput.addEventListener('focus', () => {
+  setTimeout(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 300);
+});
+
 // Initialize icons on first load
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) {
