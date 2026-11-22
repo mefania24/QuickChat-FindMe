@@ -44,13 +44,16 @@ button, input {
   touch-action: manipulation;
 }
 
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font-family);
   background-color: var(--bg-main);
   color: var(--text-main);
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow-x: hidden;
   /* Deep vignette with dark subtle depth, no glaring orbs */
   background-image: 
     radial-gradient(ellipse at 50% 0%, rgba(22, 27, 42, 0.45) 0%, transparent 60%),
@@ -62,11 +65,13 @@ body {
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   max-width: 1060px;
   margin: 0 auto;
   padding: 1.25rem 1.5rem;
+  overflow: hidden;
 }
 
 /* Top Navigation Bar */
@@ -74,12 +79,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
   padding: 0.8rem 1.35rem;
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-lg);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   z-index: 20;
 }
 
@@ -184,10 +190,12 @@ body {
 
 /* Main Content Area */
 .main-content {
-  flex: 1;
+  flex: 1 1 0%;
   display: flex;
   flex-direction: column;
   position: relative;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Views Navigation */
@@ -198,11 +206,15 @@ body {
   transition: opacity 0.25s ease, transform 0.25s ease;
   width: 100%;
   height: 100%;
+  min-height: 0;
 }
 
 .view.active {
   display: flex;
   flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
+  height: 100%;
   opacity: 1;
   transform: translateY(0);
 }
@@ -212,6 +224,11 @@ body {
    =================================================== */
 #view-lobby {
   justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
   align-items: center;
   min-height: calc(100vh - 180px);
 }
@@ -512,15 +529,20 @@ body {
    3. CHAT VIEW (Dark Ambient Style)
    =================================================== */
 #view-chat {
-  flex: 1;
-  height: calc(100vh - 150px);
-  height: calc(100dvh - 150px);
+  flex: 1 1 0%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .chat-container {
   display: flex;
   flex-direction: column;
+  flex: 1 1 0%;
   height: 100%;
+  min-height: 0;
   background: var(--bg-card);
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-xl);
@@ -531,6 +553,7 @@ body {
 
 /* Chat Header */
 .chat-header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -611,6 +634,7 @@ body {
 
 /* Chat Ephemeral Notice */
 .chat-notice {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -632,8 +656,10 @@ body {
 
 /* Messages List Area */
 .chat-messages {
-  flex: 1;
+  flex: 1 1 0%;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
   padding: 1.35rem;
@@ -744,6 +770,7 @@ body {
 
 /* Typing Indicator */
 .typing-indicator {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -776,6 +803,7 @@ body {
 
 /* Chat Input Bar */
 .chat-input-bar {
+  flex-shrink: 0;
   padding: 0.9rem 1.2rem;
   background: #090b10;
   border-top: 1px solid var(--bg-card-border);
@@ -950,8 +978,9 @@ body {
 
 /* Footer */
 .app-footer {
+  flex-shrink: 0;
   text-align: center;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.75rem;
   color: var(--text-sub);
 }
@@ -1071,13 +1100,20 @@ body {
 
   /* Chat View on Mobile (Native App Feel) */
   #view-chat {
-    height: calc(100vh - 75px);
-    height: calc(100dvh - 75px);
+    flex: 1 1 0%;
+    height: 100%;
+    min-height: 0;
   }
 
   .chat-container {
     border-radius: var(--radius-md);
+    flex: 1 1 0%;
     height: 100%;
+    min-height: 0;
+  }
+
+  .app-container:has(#view-chat.active) .app-footer {
+    display: none;
   }
 
   .chat-header {

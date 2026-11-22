@@ -126,15 +126,18 @@ function switchView(viewName) {
   viewChat.classList.remove('active');
 
   if (viewName === 'lobby') {
+    document.body.classList.remove('in-chat');
     viewLobby.classList.add('active');
     stopSearchTimer();
     clearChatMessages(); // Completely wipe messages when returning to lobby
     partnerLeftOverlay.style.display = 'none';
     typingIndicator.style.display = 'none';
   } else if (viewName === 'searching') {
+    document.body.classList.remove('in-chat');
     viewSearching.classList.add('active');
     startSearchTimer();
   } else if (viewName === 'chat') {
+    document.body.classList.add('in-chat');
     viewChat.classList.add('active');
     stopSearchTimer();
     partnerLeftOverlay.style.display = 'none';
@@ -179,6 +182,13 @@ function clearChatMessages() {
   chatMessages.innerHTML = '';
 }
 
+// Helper to ensure messages container auto-scrolls properly
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+}
+
 // Append message bubble
 function appendMessage({ sender, text, timestamp }) {
   const row = document.createElement('div');
@@ -202,7 +212,7 @@ function appendMessage({ sender, text, timestamp }) {
   row.appendChild(time);
 
   chatMessages.appendChild(row);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  scrollToBottom();
 }
 
 // Append system notice
@@ -211,7 +221,7 @@ function appendSystemNotice(text) {
   notice.classList.add('msg-system');
   notice.textContent = text;
   chatMessages.appendChild(notice);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  scrollToBottom();
 }
 
 // Event Listeners
