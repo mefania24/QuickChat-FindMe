@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickChat - Instant Anonymous Conversations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar Navigation -->
+    <header class="top-nav">
+      <div class="brand" id="brand-logo">
+        <div class="brand-icon">
+          <i data-lucide="zap"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">QuickChat</span>
+          <span class="brand-tag">Meet Me in RP</span>
+        </div>
+      </div>
+      
+      <div class="nav-right">
+        <div class="stats-badge" title="Live Users">
+          <span class="pulse-dot"></span>
+          <span id="stat-online-text">Connecting...</span>
+        </div>
+        <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound Effects">
+          <i data-lucide="volume-2" id="sound-icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area with Dynamic Views -->
+    <main class="main-content">
+      
+      <!-- 1. BASE / LOBBY VIEW -->
+      <section id="view-lobby" class="view active">
+        <div class="lobby-card">
+          <div class="lobby-badge">
+            <i data-lucide="shield-check" class="badge-icon"></i> 100% Anonymous & Ephemeral
+          </div>
+          <h1 class="hero-title">Start a quick conversation.</h1>
+          <p class="hero-desc">
+            Click <strong>FIND</strong> to instantly connect with another person. Have a conversation, share thoughts, and when done, all messages vanish without a trace.
+          </p>
+
+          <!-- The Core FIND Button -->
+          <div class="find-wrapper">
+            <button id="btn-find" class="btn-find" aria-label="Find Match">
+              <span class="btn-find-glow"></span>
+              <span class="btn-find-content">
+                <i data-lucide="compass" class="find-icon"></i>
+                <span class="find-label">FIND</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="feature-pills">
+            <div class="pill">
+              <i data-lucide="flame"></i> Instant Match
+            </div>
+            <div class="pill">
+              <i data-lucide="trash-2"></i> Auto-deleted History
+            </div>
+            <div class="pill">
+              <i data-lucide="lock"></i> No Logins Needed
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. SEARCHING / MATCHMAKING VIEW -->
+      <section id="view-searching" class="view">
+        <div class="searching-card">
+          <div class="radar-container">
+            <div class="radar-circle radar-1"></div>
+            <div class="radar-circle radar-2"></div>
+            <div class="radar-circle radar-3"></div>
+            <div class="radar-center">
+              <i data-lucide="search" class="searching-pulse-icon"></i>
+            </div>
+          </div>
+
+          <h2 class="searching-title">Finding someone for you...</h2>
+          <p class="searching-status" id="searching-status">Looking for available users</p>
+          <div class="search-timer" id="search-timer">00:00</div>
+
+          <button id="btn-cancel-find" class="btn-secondary">
+            <i data-lucide="x"></i> Cancel
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. CHATBOX VIEW -->
+      <section id="view-chat" class="view">
+        <div class="chat-container">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div class="partner-info">
+              <div class="avatar stranger-avatar">
+                <i data-lucide="user"></i>
+                <span class="avatar-status"></span>
+              </div>
+              <div class="partner-meta">
+                <h3 class="partner-title">Stranger</h3>
+                <span class="partner-status" id="partner-status-text">Connected</span>
+              </div>
+            </div>
+
+            <div class="chat-actions">
+              <!-- End button as requested -->
+              <button id="btn-end" class="btn-danger" title="End conversation and return to main page">
+                <i data-lucide="phone-off"></i>
+                <span>End</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ephemeral notice banner -->
+          <div class="chat-notice">
+            <i data-lucide="sparkles"></i>
+            <span>You're connected! Messages are completely deleted once this conversation ends.</span>
+          </div>
+
+          <!-- Messages Scrollable Area -->
+          <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be dynamically rendered here -->
+          </div>
+
+          <!-- Typing Indicator Bubble -->
+          <div class="typing-indicator" id="typing-indicator" style="display: none;">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="typing-text">Stranger is typing...</span>
+          </div>
+
+          <!-- Chat Input Bar -->
+          <div class="chat-input-bar">
+            <form id="chat-form" class="chat-form" autocomplete="off">
+              <input 
+                type="text" 
+                id="message-input" 
+                placeholder="Type your message here... (Enter to send)" 
+                maxlength="2000"
+                autocomplete="off" 
+                required
+              />
+              <button type="submit" id="btn-send" class="btn-send" aria-label="Send message">
+                <i data-lucide="send"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Overlay Notification when partner leaves -->
+          <div class="partner-left-overlay" id="partner-left-overlay" style="display: none;">
+            <div class="partner-left-modal">
+              <div class="left-icon-circle">
+                <i data-lucide="user-x"></i>
+              </div>
+              <h3>Person Left</h3>
+              <p>The other person has left the conversation. All messages have been wiped clean.</p>
+              
+              <div class="modal-actions">
+                <!-- User requested: button "Leave" which directs them into main page -->
+                <button id="btn-leave" class="btn-primary">
+                  <i data-lucide="home"></i> Leave
+                </button>
+                <button id="btn-refind" class="btn-accent">
+                  <i data-lucide="refresh-cw"></i> Find Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>QuickChat &bull; Ephemeral Random Matching &bull; Powered by WebSocket</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
